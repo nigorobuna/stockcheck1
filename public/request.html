@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ほしいものリクエスト</title>
+</head>
+<body>
+
+    <h2>ほしいものをリクエスト</h2>
+    <form id="requestForm">
+        <label for ="reporter">記入者</label>
+        <input type="text" id="reporter" name="reporter" required><br><br>
+
+        <label for="item">物品名:</label>
+        <input type="text" id="item" name="item" required><br><br>
+
+        <label for="quantity">数量:</label>
+        <input type="number" id="quantity" name="quantity" required><br><br>
+
+        <label for="reason">理由:</label>
+        <input type="text" id="reason" name="reason" required><br><br>
+
+        <button type="submit">送信</button>
+    </form>
+
+    <script>
+        // フォームが送信されたときの処理
+        document.getElementById("requestForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // デフォルトのフォーム送信を防ぐ（ページリロードしない）
+
+            // 入力データを取得
+            let reporter = document.getElementById("reporter").value;
+            let item = document.getElementById("item").value;
+            let quantity = document.getElementById("quantity").value;
+            let reason = document.getElementById("reason").value;
+
+            // サーバーに送るデータ
+            let payload = {
+                reporter: reporter,
+                item: item,
+                quantity: quantity,
+                reason: reason
+            };
+
+            // サーバーへリクエストを送信（fetch APIを使用）
+            fetch("http://localhost:3000/add-request", {
+                method: "POST", // データを送信するのでPOST
+                headers: { "Content-Type": "application/json" }, // JSON形式で送信
+                body: JSON.stringify(payload) // データをJSONに変換
+            })
+            .then(response => response.json()) // JSONとしてレスポンスを取得
+            .then(data => {
+                if (data.status === "success") {
+                    alert("ありがとうございます！リクエストが送信されました！");
+                    document.getElementById("requestForm").reset(); // フォームをリセット
+                } else {
+                    alert("エラーが発生しました: " + data.message);
+                }
+            })
+            .catch(error => alert("通信エラー: " + error));
+        });
+    </script>
+
+</body>
+</html>

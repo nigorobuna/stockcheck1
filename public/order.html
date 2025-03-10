@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在庫管理 - 発注管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>発注履歴</h2>
+    <form id="useForm">
+        <label for="reporter">記入者:</label>
+        <input type="text" id="reporter" name="reporter" required><br><br>
+        
+        <label for="usedDate">発注した日:</label>
+        <input type="date" id="usedDate" name="usedDate" required><br><br>
+        
+        <label for="usedItem">発注したもの:</label>
+        <select id="usedItem" name="usedItem" onchange="toggleOtherInput()" required>
+            <option value="">--- 選択してください ---</option>
+        </select>
+        
+        <input type="text" id="otherItem" name="otherItem" class="hidden" placeholder="具体的な品目を入力"><br><br>
+        
+        <label for="quantity">発注した数:</label>
+        <input type="number" id="quantity" name="quantity" min="1" required><br><br>
+        
+        <button type="submit">送信</button>
+    </form>
+    
+    <script>
+        // 「list」シートから選択肢を取得してプルダウンに追加
+async function loadItemList() {
+    try {
+        const response = await fetch("http://localhost:3000/get-list");
+        const data = await response.json();
+
+        if (data.status === "success") {
+            const select = document.getElementById("usedItem");
+
+            // 初期選択肢をクリア
+            select.innerHTML = '<option value="">--- 選択してください ---</option>';
+
+            // 取得したデータをプルダウンに追加
+            data.items.forEach(item => {
+                let option = document.createElement("option");
+                option.value = item;
+                option.textContent = item;
+                select.appendChild(option);
+            });
+
+            // 「その他」オプションを追加
+            let otherOption = document.createElement("option");
+            otherOption.value = "その他";
+            otherOption.textContent = "その他";
+            select.appendChild(otherOption);
+        } else {
+            console.error("リストの取得に失敗:", data.message);
+        }
+    } catch (error) {
+        console.error("通信エラー:", error);
+    }
+}
+
+
+        // 「その他」が選ばれたらテキスト入力を表示
+        function toggleOtherInput() {
+            let usedItem = document.getElementById("usedItem");
+            let otherItem = document.getElementById("otherItem");
+            
+            if (usedItem.value === "その他") {
+                otherItem.classList.remove("hidden");
+                otherItem.required = true;
+            } else {
+                otherItem.classList.add("hidden");
+                otherItem.required = false;
+            }
+        }
+
+        // XSS対策のためのエスケープ処理
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"/]/g, function(tag) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;',
+                    '/': '&#x2F;'
+                }[tag] || tag;
+            });
+        }
+
+        // フォーム送信処理
+        document.getElementById("useForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let reporter = escapeHTML(document.getElementById("reporter").value);
+            let usedDate = escapeHTML(document.getElementById("usedDate").value);
+            let usedItem = escapeHTML(document.getElementById("usedItem").value);
+            let otherItem = escapeHTML(document.getElementById("otherItem").value);
+            let quantity = escapeHTML(document.getElementById("quantity").value);
+            
+            if (usedItem === "その他") {
+                usedItem = otherItem; // その他の場合は自由記述の内容を使う
+            }
+            
+            let payload = {
+            type: "order",  // 追加
+            reporter: reporter,
+            usedDate: usedDate,
+            usedItem: usedItem,
+            quantity: quantity
+            };
+
+
+            fetch("http://localhost:3000/add-order", {  // サーバーのエンドポイントに送信
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("ありがとうございます！報告が送信されました！");
+                    document.getElementById("useForm").reset();
+                    loadItemList(); // 送信後にリストを再取得
+                } else {
+                    alert("エラーが発生しました: " + data.message);
+                }
+            })
+            .catch(error => alert("通信エラー: " + error));
+        });
+
+        // ページ読み込み時にリストを取得
+        window.onload = loadItemList;
+    </script>
+</body>
+</html>

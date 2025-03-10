@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在庫管理 - ログイン</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 全体のスタイル */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        
+        /* ログインフォームのスタイル */
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            width: 300px;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            outline: none;
+        }
+        
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #00aaff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        button:hover {
+            background: #0088cc;
+        }
+        
+        .error-message {
+            color: #ff4d4d;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>在庫管理システム</h2>
+        <form id="loginForm">
+            <label for="username">ユーザー名:</label>
+            <input type="text" id="username" placeholder="ユーザー名を入力" required>
+            
+            <label for="password">パスワード:</label>
+            <input type="password" id="password" placeholder="パスワードを入力" required>
+            
+            <button type="submit">ログイン</button>
+        </form>
+        <p id="errorMessage" class="error-message"></p>
+    </div>
+    
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // フォーム送信を防ぐ
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === "admin" && password === "kanrisha") {
+                sessionStorage.setItem("userType", "admin"); // 管理者のセッションを保存
+                window.location.href = "index.html"; // メニュー画面へ遷移
+            } else if (username === "user" && password === "labo") {
+                sessionStorage.setItem("userType", "user"); // 一般ユーザーのセッションを保存
+                window.location.href = "index.html"; // メニュー画面へ遷移
+            } else {
+                document.getElementById('errorMessage').textContent = "ユーザー名またはパスワードが違います。";
+            }
+        });
+    </script>
+    
+</body>
+</html>

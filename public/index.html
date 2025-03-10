@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在庫管理 - メニュー</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        .menu-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            width: 300px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .menu-button {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background: #00aaff;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .menu-button:hover {
+            background: #0088cc;
+        }
+        #logoutButton {
+            background: #ff4d4d;
+        }
+        #logoutButton:hover {
+            background: #cc0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <h2>メニュー</h2>
+        <button class="menu-button" onclick="location.href='use.html'">つかった</button>
+        <button class="menu-button" onclick="location.href='restock.html'">ほしいもの</button>
+        <div id="userButtons">
+            <!-- JavaScriptで管理者か一般ユーザーか判定して表示 -->
+        </div>
+        <button id="logoutButton" class="menu-button" onclick="logout()">ログアウト</button>
+    </div>
+
+    <script>
+        // ログイン情報を取得
+        const userType = sessionStorage.getItem("userType");
+
+        const userButtons = document.getElementById("userButtons");
+
+        if (userType === "admin") {
+            // 管理者の場合
+            userButtons.innerHTML = `<button class="menu-button" onclick="location.href='order.html'">発注</button>`;
+        } else if (userType === "user") {
+            // 一般ユーザーの場合
+            userButtons.innerHTML = `<button class="menu-button" onclick="location.href='request.html'">要望・お問い合わせ</button>`;
+        } else {
+            // 未ログインならログインページへリダイレクト
+            window.location.href = "login.html";
+        }
+
+        // ログアウト処理
+        function logout() {
+            sessionStorage.removeItem("userType");
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

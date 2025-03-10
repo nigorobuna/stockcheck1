@@ -34,13 +34,30 @@ app.get('/login', (req, res) => {
   res.redirect(authUrl);
 });
 
+// 必要なモジュールをインポート
+const dotenv = require('dotenv');
+dotenv.config(); // .env ファイルを読み込む
+
 // 認証後の処理
 app.get('/callback', async (req, res) => {
   const { code } = req.query;
   try {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
-    require('fs').writeFileSync('.tokens.json', JSON.stringify(tokens));
+    
+    // .env ファイルにトークンを保存
+    process.env.ACCESS_TOKEN = tokens.access_token;
+    process.env.REFRESH_TOKEN = tokens.refresh_token;
+
+    // .env ファイルを上書き保存するための処理
+    const fs = require('fs');
+    const envPath = './.env';
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const newEnvContent = envContent.replace(/ACCESS_TOKEN=.*/g, `ACCESS_TOKEN=${tokens.access_token}`)
+                                     .replace(/REFRESH_TOKEN=.*/g, `REFRESH_TOKEN=${tokens.refresh_token}`);
+
+    fs.writeFileSync(envPath, newEnvContent);
+
     res.send('✅ 認証成功！トークンを取得しました！');
   } catch (error) {
     console.error('❌ 認証エラー:', error);

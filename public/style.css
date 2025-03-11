@@ -128,7 +128,7 @@ button:hover {
 
 /*ホバー時*/
 .menu-button:hover {
-    background-color: #5737f9;
+    background-color: #ff6b6b;
     transform: scale(1.05);
 }
 

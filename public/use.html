@@ -41,13 +41,14 @@
     </form>
     
     <script>
-        // 「list」シートから選択肢を取得してプルダウンに追加
-async function loadItemList() {
+        async function loadItemList() {
     try {
         const response = await fetch("http://localhost:3000/get-list");
         const data = await response.json();
 
-        if (data.status === "success") {
+        console.log("取得データ:", data); // デバッグ用
+
+        if (data.status === "success" && Array.isArray(data.items)) {
             const select = document.getElementById("usedItem");
 
             // 初期選択肢をクリア
@@ -67,12 +68,15 @@ async function loadItemList() {
             otherOption.textContent = "その他";
             select.appendChild(otherOption);
         } else {
-            console.error("リストの取得に失敗:", data.message);
+            console.error("リストの取得に失敗:", data.message || "データが正しくありません");
         }
     } catch (error) {
         console.error("通信エラー:", error);
     }
 }
+
+
+
 
 
         // 「その他」が選ばれたらテキスト入力を表示

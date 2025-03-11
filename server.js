@@ -103,6 +103,23 @@ app.get('/get-list', async (req, res) => {
 });
 
 
+// 「その他」が選ばれたらテキスト入力を表示
+function toggleOtherInput() {
+  let usedItem = document.getElementById("usedItem");
+  let otherItem = document.getElementById("otherItem");
+
+  if (usedItem.value === "その他") {
+      otherItem.classList.remove("hidden");  // クラスを削除 → 表示
+      otherItem.required = true;
+  } else {
+      otherItem.classList.add("hidden");  // クラスを追加 → 非表示
+      otherItem.required = false;
+      otherItem.value = "";  // 入力欄をリセット
+  }
+}
+
+// イベントリスナーを追加（プルダウン変更時）
+//document.getElementById("usedItem").addEventListener("change", toggleOtherInput);
 
 
 

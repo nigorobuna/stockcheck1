@@ -1,0 +1,221 @@
+/*全体の設定*/
+html, body {
+    font-size: 16px; /* 基本のフォントサイズ */
+    font-family: 'Poppins', sans-serif; /* モダンで洗練されたフォント */
+    margin: 0;
+    padding: 0;
+    background-color: #f7f0e1; /* ベージュ背景 */
+    color: #4a4a4a; /* 落ち着いた灰色の文字 */
+    line-height: 1.6;
+    height: 100vh; /* 高さ100% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*リンク*/
+a {
+    text-decoration: none;
+    color: #ff6b6b; /* 柔らかな赤色 */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: #ff4757; /* ホバー時に少し色を濃く */
+    transform: scale(1.05); /* わずかに拡大する */
+}
+
+/*ボタン*/
+button {
+    background-color: #ff6b6b; /* 明るいピンクのボタン */
+    color: white;
+    border: none;
+    padding: 0.8rem 1.6rem;
+    font-size: 1.1rem; /* ボタンの文字を少し大きく */
+    border-radius: 30px; /* 丸みのあるボタン */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff4757; /* ホバー時に色を濃く */
+    transform: scale(1.05); /* わずかに拡大する */
+}
+
+/*ログインフォームのコンテナ*/
+.login-container {
+    background-color: #ffffff;
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* ログインボックスの最大幅 */
+    text-align: center;
+}
+
+/*タイトル*/
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+/*入力フィールド*/
+input[type="text"], input[type="password"], input[type="email"], textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, textarea:focus {
+    border-color: #ff6b6b; /* フォーカス時に赤色 */
+}
+
+/*ログインボタン*/
+button {
+    background-color: #ff6b6b; /* ボタンの色 */
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 1rem;
+}
+
+button:hover {
+    background-color: #ff4757; /* ホバー時に色を濃く */
+    transform: scale(1.05); /* わずかに拡大 */
+}
+
+/*メニューボタン*/
+.menu-button {
+    background-color: #ff6b6b; /* メニューのボタンの色 */
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem; /* ボタンの文字を少し大きく */
+    border-radius: 30px; /* 丸みのあるボタン */
+    width: 100%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 1rem 0;
+}
+
+.menu-button-1 {
+    background-color: #ffb76b; /* メニュー項目1 */
+}
+
+.menu-button-2 {
+    background-color: #6bff6b; /* メニュー項目2 */
+}
+
+.menu-button-3 {
+    background-color: #6b6bff; /* メニュー項目3 */
+}
+
+.menu-button-4 {
+    background-color: #ff4757; /* メニュー項目4 */
+}
+
+/*ホバー時*/
+.menu-button:hover {
+    background-color: #5737f9;
+    transform: scale(1.05);
+}
+
+/*ログアウトボタン*/
+.logout-button {
+    background-color: #ff4757; /* ログアウトの赤色 */
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 25px;
+    width: auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 2rem;
+}
+
+.logout-button:hover {
+    background-color: #ff6b6b; /* ログアウトボタンのホバー時の色 */
+    transform: scale(1.05);
+}
+
+/*セクション全体の余白*/
+section {
+    padding: 3rem 1.5rem; /* セクションごとの余白を増やす */
+}
+
+/*hiddenクラス対応*/
+.hidden {
+    display: none !important; /* 非表示にする */
+}
+
+/*セクションのラベルやタイトル*/
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif; /* モダンなフォント */
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: 600; /* 太字 */
+}
+
+/*レスポンシブ対応: モバイル向けの調整*/
+@media (max-width: 768px) {
+    .login-container {
+        padding: 1.5rem;
+    }
+
+    button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+
+    section {
+        padding: 2rem 1rem;
+    }
+
+    footer {
+        padding: 1.2rem;
+        font-size: 1rem;
+    }
+
+    .card {
+        width: 100%; /* 小さな画面ではボックスが全幅を使用 */
+        padding: 1.5rem;
+    }
+
+    footer {
+        padding: 1.2rem;
+        font-size: 1rem;
+    }
+}
+
+/*フッター*/
+footer {
+    background-color: #ff6b6b; /* 優しいピンク */
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 1.1rem;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+}
+
+/*全体的に使いやすいボックスサイズの統一*/
+.container {
+    width: 100%;
+    max-width: 1200px; /* 最大幅を設定 */
+    margin: 0 auto; /* 中央寄せ */
+    padding: 2rem;
+    box-sizing: border-box;
+}

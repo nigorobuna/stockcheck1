@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>在庫管理 - メニュー</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
+    <!--
     <style>
         body {
             display: flex;
@@ -50,16 +52,17 @@
             background: #cc0000;
         }
     </style>
+    -->
 </head>
 <body>
     <div class="menu-container">
         <h2>メニュー</h2>
-        <button class="menu-button" onclick="location.href='use.html'">つかった</button>
-        <button class="menu-button" onclick="location.href='restock.html'">ほしいもの</button>
+        <button class="menu-button menu-button-1" onclick="location.href='use.html'">つかった</button>
+        <button class="menu-button menu-button-2" onclick="location.href='restock.html'">ほしいもの</button>
         <div id="userButtons">
             <!-- JavaScriptで管理者か一般ユーザーか判定して表示 -->
         </div>
-        <button id="logoutButton" class="menu-button" onclick="logout()">ログアウト</button>
+        <button id="logoutButton" class="menu-button logout-button" onclick="logout()">ログアウト</button>
     </div>
 
     <script>
@@ -70,10 +73,10 @@
 
         if (userType === "admin") {
             // 管理者の場合
-            userButtons.innerHTML = `<button class="menu-button" onclick="location.href='order.html'">発注</button>`;
+            userButtons.innerHTML = `<button class="menu-button menu-button-3" onclick="location.href='order.html'">発注</button>`;
         } else if (userType === "user") {
             // 一般ユーザーの場合
-            userButtons.innerHTML = `<button class="menu-button" onclick="location.href='request.html'">要望・お問い合わせ</button>`;
+            userButtons.innerHTML = `<button class="menu-button menu-button-3" onclick="location.href='request.html'">要望・お問い合わせ</button>`;
         } else {
             // 未ログインならログインページへリダイレクト
             window.location.href = "login.html";

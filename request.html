@@ -1,67 +1,135 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ほしいものリクエスト</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
 
+      body {
+        text-align: center;
+        background-color: #fffaf3; /* 優しいクリーム色 */
+        font-family: "Nunito", "Yu Gothic UI", sans-serif;
+      }
+
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ff6b81;
+        margin-bottom: 20px;
+      }
+
+      form {
+        width: 50%;
+        margin: auto;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        border: 3px solid #ffcad4;
+      }
+
+      label {
+        display: block;
+        font-size: 16px;
+        font-weight: bold;
+        color: #ff6b81;
+        margin-bottom: 5px;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 2px solid #ffcad4;
+        border-radius: 10px;
+        font-size: 14px;
+        background-color: #fff;
+      }
+
+      button {
+        display: block;
+        width: 100%;
+        max-width: 300px;
+        padding: 12px;
+        margin: 20px auto;
+        background-color: #ff9aa2;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        font-size: 18px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+        box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      button:hover {
+        background-color: #ff6b81;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
     <h2>ほしいものをリクエスト</h2>
     <form id="requestForm">
-        <label for ="reporter">記入者</label>
-        <input type="text" id="reporter" name="reporter" required><br><br>
+      <label for="reporter">記入者</label>
+      <input type="text" id="reporter" name="reporter" required /><br /><br />
 
-        <label for="item">物品名:</label>
-        <input type="text" id="item" name="item" required><br><br>
+      <label for="item">物品名:</label>
+      <input type="text" id="item" name="item" required /><br /><br />
 
-        <label for="quantity">数量:</label>
-        <input type="number" id="quantity" name="quantity" required><br><br>
+      <label for="quantity">数量:</label>
+      <input type="number" id="quantity" name="quantity" required /><br /><br />
 
-        <label for="reason">理由:</label>
-        <input type="text" id="reason" name="reason" required><br><br>
+      <label for="reason">理由:</label>
+      <input type="text" id="reason" name="reason" required /><br /><br />
 
-        <button type="submit">送信</button>
+      <button type="submit">送信</button>
     </form>
 
     <script>
-        // フォームが送信されたときの処理
-        document.getElementById("requestForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // デフォルトのフォーム送信を防ぐ（ページリロードしない）
+      // フォームが送信されたときの処理
+      document
+        .getElementById("requestForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // デフォルトのフォーム送信を防ぐ（ページリロードしない）
 
-            // 入力データを取得
-            let reporter = document.getElementById("reporter").value;
-            let item = document.getElementById("item").value;
-            let quantity = document.getElementById("quantity").value;
-            let reason = document.getElementById("reason").value;
+          // 入力データを取得
+          let reporter = document.getElementById("reporter").value;
+          let item = document.getElementById("item").value;
+          let quantity = document.getElementById("quantity").value;
+          let reason = document.getElementById("reason").value;
 
-            // サーバーに送るデータ
-            let payload = {
-                reporter: reporter,
-                item: item,
-                quantity: quantity,
-                reason: reason
-            };
+          // サーバーに送るデータ
+          let payload = {
+            reporter: reporter,
+            item: item,
+            quantity: quantity,
+            reason: reason,
+          };
 
-            // サーバーへリクエストを送信（fetch APIを使用）
-            fetch("http://localhost:3000/add-request", {
-                method: "POST", // データを送信するのでPOST
-                headers: { "Content-Type": "application/json" }, // JSON形式で送信
-                body: JSON.stringify(payload) // データをJSONに変換
+          // サーバーへリクエストを送信（fetch APIを使用）
+          fetch("http://localhost:3000/add-request", {
+            method: "POST", // データを送信するのでPOST
+            headers: { "Content-Type": "application/json" }, // JSON形式で送信
+            body: JSON.stringify(payload), // データをJSONに変換
+          })
+            .then((response) => response.json()) // JSONとしてレスポンスを取得
+            .then((data) => {
+              if (data.status === "success") {
+                alert("ありがとうございます！リクエストが送信されました！");
+                document.getElementById("requestForm").reset(); // フォームをリセット
+              } else {
+                alert("エラーが発生しました: " + data.message);
+              }
             })
-            .then(response => response.json()) // JSONとしてレスポンスを取得
-            .then(data => {
-                if (data.status === "success") {
-                    alert("ありがとうございます！リクエストが送信されました！");
-                    document.getElementById("requestForm").reset(); // フォームをリセット
-                } else {
-                    alert("エラーが発生しました: " + data.message);
-                }
-            })
-            .catch(error => alert("通信エラー: " + error));
+            .catch((error) => alert("通信エラー: " + error));
         });
     </script>
-
-</body>
+  </body>
 </html>

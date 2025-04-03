@@ -74,7 +74,7 @@ app.listen(port, () => {
 // Google Sheets APIのセットアップ
 const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
 
-// **🔥 デバッグ用: 受信データを確認するミドルウェア**
+// **🔥 デバッグ用: 受信データを確認するミドルウェアk**
 app.use((req, res, next) => {
     console.log("📩 受信データ:", req.body);
     next();

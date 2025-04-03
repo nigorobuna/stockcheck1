@@ -80,12 +80,22 @@
         transform: scale(1.05);
       }
 
+<<<<<<< HEAD
       .hidden {
         display: none;
       }
     </style>
   </head>
   <body>
+=======
+.hidden {
+        display: none;
+    }
+</style>
+
+</head>
+<body>
+>>>>>>> behind
     <div>
       <h2>使ったものの報告</h2>
     </div>
@@ -213,8 +223,55 @@
             usedItem = otherItem; // その他の場合は自由記述の内容を使う
           }
 
+<<<<<<< HEAD
           let payload = {
             type: "use",
+=======
+        // 「その他」が選ばれたらテキスト入力を表示
+        function toggleOtherInput() {
+            let usedItem = document.getElementById("usedItem");
+            let otherItem = document.getElementById("otherItem");
+            
+            if (usedItem.value === "その他") {
+                otherItem.classList.remove("hidden");
+                otherItem.required = true;
+            } else {
+                otherItem.classList.add("hidden");
+                otherItem.required = false;
+            }
+        }
+
+        // XSS対策のためのエスケープ処理
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"/]/g, function(tag) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;',
+                    '/': '&#x2F;'
+                }[tag] || tag;
+            });
+        }
+
+        // フォーム送信処理
+        document.getElementById("useForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            let reporter = escapeHTML(document.getElementById("reporter").value);
+            let usedDate = escapeHTML(document.getElementById("usedDate").value);
+            let usedItem = escapeHTML(document.getElementById("usedItem").value);
+            let otherItem = escapeHTML(document.getElementById("otherItem").value);
+            let quantity = escapeHTML(document.getElementById("quantity").value);
+            
+            if (usedItem === "その他") {
+                usedItem = otherItem; // その他の場合は自由記述の内容を使う
+            }
+            
+            let payload = {
+            type: "use",  // 追加k
+>>>>>>> behind
             reporter: reporter,
             usedDate: usedDate,
             usedItem: usedItem,

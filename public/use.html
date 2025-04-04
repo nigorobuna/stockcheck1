@@ -128,6 +128,25 @@
 
     <script>
       // use.html内
+
+      async function fetchItems() {
+        try {
+          const response = await fetch("/api/get-list");
+          const data = await response.json();
+          if (data.status === "success") {
+            const items = data.items;
+            const selectElement = document.getElementById("item-list");
+            items.forEach((item) => {
+              const option = document.createElement("option");
+              option.value = item;
+              option.textContent = item;
+              selectElement.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error("アイテムリストの取得エラー:", error);
+        }
+      }
       async function loadItemList() {
         try {
           const response = await fetch("/api/get-list"); // APIのエンドポイントを修正

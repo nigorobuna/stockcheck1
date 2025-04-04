@@ -5,13 +5,13 @@ const creds = require("../credentials.json"); // Google APIの認証情報を指
 async function getItemListFromSheet() {
   const doc = new GoogleSpreadsheet(
     "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI"
-  ); // シートIDを指定
+  );
   await doc.useServiceAccountAuth(creds); // 認証
   await doc.loadInfo(); // シートのメタデータをロード
 
-  const sheet = doc.sheetsByIndex[0]; // シートのインデックスを指定（最初のシート）
-  const rows = await sheet.getRows(); // 行データを取得
-  return rows.map((row) => row["Item"]); // アイテムのリストを取得
+  const sheet = doc.sheetsByIndex["list"];
+  const rows = await sheet.getRows();
+  return rows.map((row) => row["Item"]);
 }
 
 // POSTリクエストを処理する
@@ -25,8 +25,30 @@ module.exports = async (req, res) => {
       res.status(500).json({ status: "error", message: error.message });
     }
   } else if (req.method === "POST") {
-    // POSTリクエストの処理（例: データ追加など）
-    // 必要に応じてここに処理を追加します
+    try {
+      const { reporter, usedDate, usedItem, quantity } = req.body;
+
+      const doc = new GoogleSpreadsheet(
+        "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI"
+      );
+      await doc.useServiceAccountAuth(creds);
+      await doc.loadInfo();
+
+      const sheet = doc.sheetsByIndex[0];
+      await sheet.addRow({
+        Reporter: reporter,
+        UsedDate: usedDate,
+        UsedItem: usedItem,
+        Quantity: quantity,
+      });
+
+      res
+        .status(200)
+        .json({ status: "success", message: "データが追加されました" });
+    } catch (error) {
+      console.error("データ追加エラー:", error);
+      res.status(500).json({ status: "error", message: error.message });
+    }
   } else {
     res.status(405).json({ status: "error", message: "Method Not Allowed" });
   }

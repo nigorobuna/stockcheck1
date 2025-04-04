@@ -1,7 +1,8 @@
 // api/get-list.js
 const { google } = require("googleapis");
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
+  // OAuth2 クライアントをセットアップ
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
@@ -16,8 +17,7 @@ module.exports = async (req, res) => {
   const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
   const spreadsheetId = "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI";
-  const sheetName = "list"; // リストが保存されているシート名
-  const range = `${sheetName}!A:A`; // A列からリストを取得
+  const range = "list!A:A"; // シート名と範囲を指定
 
   try {
     const response = await sheets.spreadsheets.values.get({
@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
       ? response.data.values.map((row) => row[0])
       : [];
 
-    res.json({
+    res.status(200).json({
       status: "success",
       items,
     });
@@ -37,4 +37,4 @@ module.exports = async (req, res) => {
     console.error("エラー:", error);
     res.status(500).json({ status: "error", message: error.message });
   }
-};
+}

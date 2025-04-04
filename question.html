@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>お問い合わせフォーム</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <!--
     <style>
         body {
@@ -41,101 +44,137 @@
         }
     </style>
     -->
-</head>
-<body>
-
+  </head>
+  <body>
     <h2>お問い合わせフォーム</h2>
 
     <form id="contactForm">
-        <!-- 名前入力k -->
-        <label for="name">名前：</label>
-        <input type="text" id="name" name="name" placeholder="お名前を入力してください">
-        <label>
-            <input type="checkbox" id="anonymous"> 匿名にする
-        </label>
+      <!-- 名前入力k -->
+      <label for="name">名前：</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="お名前を入力してください"
+      />
+      <label> <input type="checkbox" id="anonymous" /> 匿名にする </label>
 
-        <!-- 連絡の要不要 -->
-        <label>連絡の要不要：</label>
-        <label><input type="radio" name="contact" value="不要" checked> 不要</label>
-        <label><input type="radio" name="contact" value="要る" id="need-contact"> 要る</label>
+      <!-- 連絡の要不要 -->
+      <label>連絡の要不要：</label>
+      <label
+        ><input type="radio" name="contact" value="不要" checked /> 不要</label
+      >
+      <label
+        ><input type="radio" name="contact" value="要る" id="need-contact" />
+        要る</label
+      >
 
-        <!-- メールアドレス入力（デフォルト非表示） -->
-        <div id="email-section" class="hidden">
-            <label for="email">メールアドレス：</label>
-            <input type="email" id="email" name="email" placeholder="メールアドレスを入力">
-        </div>
+      <!-- メールアドレス入力（デフォルト非表示） -->
+      <div id="email-section" class="hidden">
+        <label for="email">メールアドレス：</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="メールアドレスを入力"
+        />
+      </div>
 
-        <!-- 質問入力 -->
-        <label for="question">質問内容：</label>
-        <textarea id="question" name="question" placeholder="質問を入力してください"></textarea>
+      <!-- 質問入力 -->
+      <label for="question">質問内容：</label>
+      <textarea
+        id="question"
+        name="question"
+        placeholder="質問を入力してください"
+      ></textarea>
 
-        <!-- 送信ボタン -->
-        <button type="submit">送信</button>
+      <!-- 送信ボタン -->
+      <button type="submit">送信</button>
     </form>
 
     <script>
-        document.getElementById('anonymous').addEventListener('change', function() {
-            let nameInput = document.getElementById('name');
-            if (this.checked) {
-                nameInput.value = "";
-                nameInput.classList.add('disabled');
-                nameInput.setAttribute('disabled', 'true');
-            } else {
-                nameInput.classList.remove('disabled');
-                nameInput.removeAttribute('disabled');
-            }
+      // XSS対策のためのエスケープ処理
+      function escapeHTML(str) {
+        return str.replace(/[&<>'"/]/g, function (tag) {
+          return (
+            {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+              "/": "&#x2F;",
+            }[tag] || tag
+          );
+        });
+      }
+      document
+        .getElementById("anonymous")
+        .addEventListener("change", function () {
+          let nameInput = document.getElementById("name");
+          if (this.checked) {
+            nameInput.value = "";
+            nameInput.classList.add("disabled");
+            nameInput.setAttribute("disabled", "true");
+          } else {
+            nameInput.classList.remove("disabled");
+            nameInput.removeAttribute("disabled");
+          }
         });
 
-        function toggleEmailField() {
-            let emailSection = document.getElementById('email-section');
-            let needContact = document.getElementById('need-contact').checked;
-            emailSection.classList.toggle('hidden', !needContact);
-        }
+      function toggleEmailField() {
+        let emailSection = document.getElementById("email-section");
+        let needContact = document.getElementById("need-contact").checked;
+        emailSection.classList.toggle("hidden", !needContact);
+      }
 
-        document.querySelectorAll('input[name="contact"]').forEach(el => {
-            el.addEventListener('change', toggleEmailField);
-        });
+      document.querySelectorAll('input[name="contact"]').forEach((el) => {
+        el.addEventListener("change", toggleEmailField);
+      });
 
-        // 📌 フォーム送信処理（スプレッドシートへデータを送信）
-        document.getElementById("contactForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // デフォルトの送信を防ぐ
+      // 📌 フォーム送信処理（スプレッドシートへデータを送信）
+      document
+        .getElementById("contactForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // デフォルトの送信を防ぐ
 
-            // 入力データを取得
-            let name = document.getElementById("name").value || "匿名";
-            let contactNeeded = document.querySelector('input[name="contact"]:checked').value;
-            let email = document.getElementById("email").value || "なし";
-            let question = document.getElementById("question").value;
+          // 入力データを取得
+          let name = document.getElementById("name").value || "匿名";
+          let contactNeeded = document.querySelector(
+            'input[name="contact"]:checked'
+          ).value;
+          let email = document.getElementById("email").value || "なし";
+          let question = document.getElementById("question").value;
 
-            // 送信データを作成
-            let payload = {
-                name: name,
-                contactNeeded: contactNeeded,
-                email: email,
-                question: question
-            };
+          // 送信データを作成
+          let payload = {
+            name: name,
+            contactNeeded: contactNeeded,
+            email: email,
+            question: question,
+          };
 
-            // サーバーに送信
-            fetch("http://localhost:3000/add-question", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+          // サーバーに送信
+          fetch("https://stockcheck1.vercel.app/add-question", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.status === "success") {
+                alert("お問い合わせが送信されました！");
+                document.getElementById("contactForm").reset();
+                toggleEmailField(); // メール入力欄もリセット
+              } else {
+                alert("エラー: " + data.message);
+              }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert("お問い合わせが送信されました！");
-                    document.getElementById("contactForm").reset();
-                    toggleEmailField(); // メール入力欄もリセット
-                } else {
-                    alert("エラー: " + data.message);
-                }
-            })
-            .catch(error => alert("通信エラー: " + error));
+            .catch((error) => alert("通信エラー: " + error));
         });
 
-        // 初期状態でメール入力欄を非表示
-        toggleEmailField();
+      // 初期状態でメール入力欄を非表示
+      toggleEmailField();
     </script>
-
-</body>
+  </body>
 </html>

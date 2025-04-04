@@ -93,17 +93,26 @@
     </form>
 
     <script>
-<<<<<<< HEAD
-      // フォームが送信されたときの処理
+      // XSS対策のためのエスケープ処理
+      function escapeHTML(str) {
+        return str.replace(/[&<>'"/]/g, function (tag) {
+          return (
+            {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;",
+              "/": "&#x2F;",
+            }[tag] || tag
+          );
+        });
+      }
+      // フォームが送信されたときの処理k
       document
         .getElementById("requestForm")
         .addEventListener("submit", function (event) {
           event.preventDefault(); // デフォルトのフォーム送信を防ぐ（ページリロードしない）
-=======
-        // フォームが送信されたときの処理k
-        document.getElementById("requestForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // デフォルトのフォーム送信を防ぐ（ページリロードしない）
->>>>>>> behind
 
           // 入力データを取得
           let reporter = document.getElementById("reporter").value;
@@ -120,7 +129,7 @@
           };
 
           // サーバーへリクエストを送信（fetch APIを使用）
-          fetch("http://localhost:3000/add-request", {
+          fetch("https://stockcheck1.vercel.app/add-request", {
             method: "POST", // データを送信するのでPOST
             headers: { "Content-Type": "application/json" }, // JSON形式で送信
             body: JSON.stringify(payload), // データをJSONに変換

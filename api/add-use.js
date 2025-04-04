@@ -1,8 +1,8 @@
-// api/add-request.js
+// api/add-use.js
 const { google } = require("googleapis");
 
 module.exports = async (req, res) => {
-  const { reporter, item, quantity, reason } = req.body;
+  const { reporter, usedDate, usedItem, quantity } = req.body;
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
@@ -18,10 +18,12 @@ module.exports = async (req, res) => {
   const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
   const spreadsheetId = "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI";
-  const sheetName = "request";
+  const sheetName = "use";
   const range = `${sheetName}!A:E`;
 
-  const values = [[reporter, item, quantity, reason, new Date().toISOString()]];
+  const values = [
+    [reporter, usedDate, usedItem, quantity, new Date().toISOString()],
+  ];
 
   try {
     await sheets.spreadsheets.values.append({
@@ -33,7 +35,7 @@ module.exports = async (req, res) => {
 
     res.json({
       status: "success",
-      message: "データを `request` シートに追加しました！",
+      message: "データを `use` シートに追加しました！",
     });
   } catch (error) {
     console.error("エラー:", error);

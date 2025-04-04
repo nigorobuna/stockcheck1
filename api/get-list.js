@@ -1,9 +1,7 @@
-// api/add-request.js
+// api/get-list.js
 const { google } = require("googleapis");
 
 module.exports = async (req, res) => {
-  const { reporter, item, quantity, reason } = req.body;
-
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
     process.env.CLIENT_SECRET,
@@ -18,22 +16,22 @@ module.exports = async (req, res) => {
   const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
   const spreadsheetId = "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI";
-  const sheetName = "request";
-  const range = `${sheetName}!A:E`;
-
-  const values = [[reporter, item, quantity, reason, new Date().toISOString()]];
+  const sheetName = "list"; // リストが保存されているシート名
+  const range = `${sheetName}!A:A`; // A列からリストを取得
 
   try {
-    await sheets.spreadsheets.values.append({
+    const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range,
-      valueInputOption: "RAW",
-      requestBody: { values },
     });
+
+    const items = response.data.values
+      ? response.data.values.map((row) => row[0])
+      : [];
 
     res.json({
       status: "success",
-      message: "データを `request` シートに追加しました！",
+      items,
     });
   } catch (error) {
     console.error("エラー:", error);

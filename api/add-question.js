@@ -1,8 +1,8 @@
-// api/add-request.js
+// api/add-question.js
 const { google } = require("googleapis");
 
 module.exports = async (req, res) => {
-  const { reporter, item, quantity, reason } = req.body;
+  const { name, contactNeeded, email, question } = req.body;
 
   const oauth2Client = new google.auth.OAuth2(
     process.env.CLIENT_ID,
@@ -18,10 +18,24 @@ module.exports = async (req, res) => {
   const sheets = google.sheets({ version: "v4", auth: oauth2Client });
 
   const spreadsheetId = "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI";
-  const sheetName = "request";
-  const range = `${sheetName}!A:E`;
+  const sheetName = "question";
+  const range = `${sheetName}!A:D`;
 
-  const values = [[reporter, item, quantity, reason, new Date().toISOString()]];
+  // デフォルト値を設定
+  const defaultName = name || "匿名";
+  const defaultContactNeeded = contactNeeded || "不要";
+  const defaultEmail = email || "なし";
+  const defaultQuestion = question || "未入力";
+
+  const values = [
+    [
+      defaultName,
+      defaultContactNeeded,
+      defaultEmail,
+      defaultQuestion,
+      new Date().toISOString(),
+    ],
+  ];
 
   try {
     await sheets.spreadsheets.values.append({
@@ -31,10 +45,7 @@ module.exports = async (req, res) => {
       requestBody: { values },
     });
 
-    res.json({
-      status: "success",
-      message: "データを `request` シートに追加しました！",
-    });
+    res.json({ status: "success", message: "お問い合わせを記録しました！" });
   } catch (error) {
     console.error("エラー:", error);
     res.status(500).json({ status: "error", message: error.message });

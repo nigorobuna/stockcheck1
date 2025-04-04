@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node server.js",
     "build": "vercel build",
     "start": "vercel start"
   },
@@ -19,5 +18,9 @@
     "google-auth-library": "^9.15.1",
     "googleapis": "^146.0.0",
     "open": "^10.1.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
   }
 }

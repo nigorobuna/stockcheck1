@@ -1,20 +1,32 @@
-const { GoogleSpreadsheet } = require("google-spreadsheet");
-const creds = require("../credentials.json"); // Google APIの認証情報を指定
+const { google } = require("googleapis");
+const { OAuth2Client } = require("google-auth-library");
+const credentials = require("../credentials.json"); // OAuthクライアントの認証情報
 
-// Google Sheets APIを利用してデータを読み込む関数
-async function getItemListFromSheet() {
-  const doc = new GoogleSpreadsheet(
-    "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI"
-  );
-  await doc.useServiceAccountAuth(creds); // 認証
-  await doc.loadInfo(); // シートのメタデータをロード
+const oauth2Client = new OAuth2Client(
+  credentials.client_id,
+  credentials.client_secret,
+  credentials.redirect_uris[0]
+);
 
-  const sheet = doc.sheetsByIndex["list"];
-  const rows = await sheet.getRows();
-  return rows.map((row) => row["Item"]);
+// 認証フローを開始する関数
+async function authenticate(req, res) {
+  const { tokens } = await oauth2Client.getToken(req.query.code); // コードを使用してトークンを取得
+  oauth2Client.setCredentials(tokens); // トークンを設定
+  // トークンを保存する処理
+  res.redirect("/"); // 成功後にリダイレクトする場所
 }
 
-// POSTリクエストを処理する
+// スプレッドシートにアクセスする関数
+async function getItemListFromSheet() {
+  const sheets = google.sheets({ version: "v4", auth: oauth2Client });
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI",
+    range: "list!A2:A", // 必要な範囲を指定
+  });
+  return res.data.values.map((row) => row[0]);
+}
+
+// POSTリクエストの処理（データ追加）
 module.exports = async (req, res) => {
   if (req.method === "GET") {
     try {
@@ -28,18 +40,14 @@ module.exports = async (req, res) => {
     try {
       const { reporter, usedDate, usedItem, quantity } = req.body;
 
-      const doc = new GoogleSpreadsheet(
-        "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI"
-      );
-      await doc.useServiceAccountAuth(creds);
-      await doc.loadInfo();
-
-      const sheet = doc.sheetsByIndex[0];
-      await sheet.addRow({
-        Reporter: reporter,
-        UsedDate: usedDate,
-        UsedItem: usedItem,
-        Quantity: quantity,
+      const sheets = google.sheets({ version: "v4", auth: oauth2Client });
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: "1T4JDxrcSAifPkNgnslUlh521IVEY571QswO34CPiyUI",
+        range: "list!A2:D",
+        valueInputOption: "RAW",
+        resource: {
+          values: [[reporter, usedDate, usedItem, quantity]],
+        },
       });
 
       res
